@@ -1,0 +1,67 @@
+.budget-card {
+    margin: 10px;
+    padding: 15px;
+}
+
+::ng-deep {
+    .budget-form {
+        display: flex;
+        gap: 1em;
+        flex-wrap: wrap;
+
+        &__full-width {
+            flex-basis: 100%;
+        }
+
+        &__list {
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+
+            th,
+            td {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+
+            th {
+                background-color: #f2f2f2;
+                text-align: left;
+            }
+        }
+
+        &__bold {
+            font-weight: bold;
+        }
+
+        &__text-end,
+        th + &__text-end {
+            text-align: end;
+        }
+
+        &__parent {
+            font-size: 1.2em;
+        }
+
+        &__input-clear {
+           width: 100%;
+            * .mdc-notched-outline > * {
+                border-color: white !important;
+            }
+            * .mdc-notched-outline>:first-child,* .mdc-notched-outline>:last-child {
+                display: none;
+            }
+            * .mdc-floating-label--float-above {
+                color: white !important;
+            }
+            * .mat-mdc-text-field-wrapper {
+                padding: unset;
+            }
+            * .mat-mdc-form-field-subscript-wrapper {
+                display: none;
+            }
+        }
+    }
+}

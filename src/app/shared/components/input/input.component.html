@@ -1,0 +1,11 @@
+<mat-form-field appearance="outline" class="full-width">
+    <mat-label *ngIf="isLabel">{{ label }}</mat-label>
+    <input
+        [id]="id"
+        matInput
+        [type]="type"
+        [placeholder]="placeholder"
+        [formControl]="control"
+        (keydown.enter)="emitData($event)"
+    />
+</mat-form-field>
