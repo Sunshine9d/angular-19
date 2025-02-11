@@ -1,7 +1,5 @@
-<h2>Budget Builder {{ year }}</h2>
 <div class="p-6 max-w-sm mx-auto bg-white rounded-xl shadow-md space-y-4">
-    <h2 class="text-xl font-bold text-gray-900">Tailwind CSS in Angular</h2>
-    <p class="text-gray-600">If this is styled, Tailwind is working! 🚀</p>
+    <h2 class="text-center text-xl font-bold text-gray-900">Budget Builder {{ year }}</h2>
 </div>
 <div>
     <form [formGroup]="budgetForm" class="budget-form">
@@ -16,8 +14,8 @@
             [control]="budgetForm.controls['endDate']"
         ></app-select>
     </form>
-    <div class="budget-form__list">
-        <table>
+    <div class="budget-form__list overflow-x-auto">
+        <table class="w-full max-w-full">
             <thead>
                 <tr>
                     <th style="width: 26em; min-width: 26em">
@@ -43,7 +41,7 @@
                     </td>
                 </tr>
                 <!--Start Income-->
-                <ng-container *ngFor="let subItem of income.controls">
+                <ng-container *ngFor="let subItem of income.controls; let r = index">
                     <!--Sub of income - L1 -->
                     <tr
                         *ngFor="
@@ -53,9 +51,10 @@
                     >
                         <td
                             [ngClass]="{ 'budget-form__bold': i === 0 }"
-                            style="text-transform: capitalize"
+                            style="text-transform: capitalize; position: relative"
                         >
                             {{ cate.value.type }}
+                            <span class="delete-icon cursor-pointer active:scale-90 transition-transform" (click)="deleteCategory(i, income, subItem)">🗑️</span>
                         </td>
                         <td
                             *ngFor="let month of months.controls"
@@ -200,6 +199,7 @@
                             style="text-transform: capitalize"
                         >
                             {{ cate.value.type }}
+                            <span class="delete-icon cursor-pointer active:scale-90 transition-transform" (click)="deleteCategory(i, expenses, subItem)">🗑️</span>
                         </td>
                         <td
                             *ngFor="let month of months.controls"

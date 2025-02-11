@@ -319,4 +319,15 @@ export class BudgetListComponent implements OnInit, AfterViewInit {
             subInput.focus();
         }
     }
+
+    deleteCategory(index: number, parent: FormArray, subItem: any) {
+        // delete parent category
+        if(!index) {
+            parent.removeAt(index);
+            return;
+        }
+        // delete sub category
+        this.getSub(subItem).removeAt(index);
+
+    }
 }
