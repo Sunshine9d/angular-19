@@ -39,6 +39,7 @@ export class BudgetListComponent implements OnInit, AfterViewInit {
         openingBalance: new FormControl([]),
         closingBalance: new FormControl([]),
     });
+    private init: boolean = true;
 
     get totalExpenses() {
         return this.budgetForm.get('totalExpenses') as FormControl;
@@ -86,6 +87,12 @@ export class BudgetListComponent implements OnInit, AfterViewInit {
         return this.budgetForm.get('endDate') as FormControl;
     }
 
+    budgetList: Array<{
+        name: string,
+        form: FormArray,
+        total: FormControl
+    }> = [];
+
     BudgetMonth: { [k: number]: string } = BudgetMonth;
     monthOptions: Array<{ value: number; label: string }> = [];
     endDates: Array<{ value: number; label: string }> = [];
@@ -102,6 +109,17 @@ export class BudgetListComponent implements OnInit, AfterViewInit {
         this.summarySubIncome();
         this.income.push(this.generateSub('General Income'));
         this.expenses.push(this.generateSub('Operational Expenses'));
+        this.budgetList.push({
+            name: 'Income',
+            form: this.income,
+            total: this.totalIncome
+        });
+        this.budgetList.push({
+            name: 'Expenses',
+            form: this.expenses,
+            total: this.totalExpenses
+        });
+
     }
 
     summarySubIncome() {
@@ -212,28 +230,30 @@ export class BudgetListComponent implements OnInit, AfterViewInit {
         return this.monthOptions.filter((month) => month.value > startDate);
     }
 
-    saveBudget() {
-        console.error('Budget saved:', this.budgetForm.value);
-    }
-
     addSubCate1(form: AbstractControl<any>, label: string) {
         const sub = (form as FormGroup).controls['sub'] as FormArray;
         sub.push(this.addSubCategory(label, label));
-        this.inputCate.reset('');
+        this.inputCate.reset('', { emitEvent: false });
     }
 
     addParentCategory(root: FormArray, name: string) {
         name = this.parentCate.value;
         if (!name.trim()) return;
-        this.parentCate.setValue('');
+        this.parentCate.setValue('', { emitEvent: false });
         root.push(this.generateSub(name));
+    }
+
+    private focusInput(name: string) {
+        const txt = name.replace(/\s+/g, '-');
         const firstMonthControl =
-            this.el.nativeElement.querySelector('.input-value');
+            this.el.nativeElement.querySelector(`.${txt}`);
         if (firstMonthControl) {
             this.renderer.setAttribute(firstMonthControl, 'autofocus', 'true');
             firstMonthControl.focus();
         }
     }
+
+
 
     private addSubCategory(key: string, label: string) {
         const subGroup = this.fb.group({
@@ -247,6 +267,12 @@ export class BudgetListComponent implements OnInit, AfterViewInit {
             months.push(new FormControl(0));
         }
         total.setValue(0);
+        if(!this.init) {
+            setTimeout(() => {
+                this.focusInput(label);
+            }, 0);
+        }
+
         return subGroup;
     }
     getSub(form: AbstractControl<any>) {
@@ -284,24 +310,18 @@ export class BudgetListComponent implements OnInit, AfterViewInit {
         });
     }
 
-    formatNumb(numb: any) {
-        console.log(numb.target.value);
+    formatNumb(numb: any, comma = false) {
         numb = numb.target.value;
+        let value = numb.replace(/[^0-9.]/g, '').replace(/\.(?=.*\.)/g, '');
         // separate by comma;
-        // .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-        return numb.replace(/[^0-9.]/g, '').replace(/\.(?=.*\.)/g, '');
-    }
-
-    focusFirstInput(input: string = '.input-value') {
-        const firstMonthControl =
-            this.el.nativeElement.querySelector('.input-value');
-        if (firstMonthControl) {
-            this.renderer.setAttribute(firstMonthControl, 'autofocus', 'true');
-            firstMonthControl.focus();
+        if(comma) {
+            value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
+        return +value;
     }
 
     ngAfterViewInit() {
+        this.init = false;
         this.focusSubInput();
     }
 
@@ -320,10 +340,10 @@ export class BudgetListComponent implements OnInit, AfterViewInit {
         }
     }
 
-    deleteCategory(index: number, parent: FormArray, subItem: any) {
+    deleteCategory(index: number, parent: FormArray, subItem: any, r: number) {
         // delete parent category
         if(!index) {
-            parent.removeAt(index);
+            parent.removeAt(r);
             return;
         }
         // delete sub category

@@ -14,10 +14,17 @@
         }
 
         &__list {
+            /* Make the first column sticky */
+            table th:first-child,
+            table td:first-child {
+                position: sticky !important;
+                left: 0;
+                background-color: white; /* Ensure the background color matches your table */
+                z-index: 1; /* Ensure the sticky column is above other content */
+            }
             table {
                 width: 100%;
                 border-collapse: collapse;
-                margin-top: 20px;
             }
 
             th,
